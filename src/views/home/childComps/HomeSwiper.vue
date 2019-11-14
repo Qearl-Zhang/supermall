@@ -1,6 +1,6 @@
 <template>
   <swiper>
-    <swiper-item v-for="item in banners">
+    <swiper-item v-for="item in banners" :key="item.id">
       <a :href="item.link">
         <img :src="item.image" alt />
       </a>
@@ -28,5 +28,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
