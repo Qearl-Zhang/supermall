@@ -1,9 +1,15 @@
 <template>
-  <div>
-    <div id="home">
-      <nav-bar class="home-nav">
-        <div slot="center">购物街</div>
-      </nav-bar>
+  <div id="home" class="wrapper">
+    <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      @pullingUp="loadmore"
+      :pull-up-load="true"
+    >
       <!-- 轮播图 -->
       <home-swiper :banners="banners" />
       <!-- 下方四个小按钮 -->
@@ -17,66 +23,8 @@
         @tabClick="tabClick"
       ></tab-control>
       <goods-list :goods="showGoods"></goods-list>
-      <ul>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-        <li>列表</li>
-      </ul>
-    </div>
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -85,6 +33,8 @@
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 
 // 子组件导入
 import HomeSwiper from "./childComps/HomeSwiper";
@@ -102,7 +52,9 @@ export default {
     FeatureView,
     NavBar,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -123,7 +75,8 @@ export default {
           list: []
         }
       },
-      currentType: "pop"
+      currentType: "pop",
+      isShowBackTop: false
     };
   },
   created() {
@@ -151,15 +104,17 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+
+        this.$refs.scroll.finishPullUp();
       });
     },
 
     /* 事件监听相关方法 */
     tabClick(index) {
-      console.log(index);
+      // console.log(index);
       switch (index) {
         case 0:
           this.currentType = "pop";
@@ -172,6 +127,20 @@ export default {
           //   这个break可写可不写
           break;
       }
+    },
+    backClick() {
+      // console.log("监听点击");
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    contentScroll(position) {
+      // console.log(position);
+      this.isShowBackTop = -position.y > 1000;
+    },
+    loadmore() {
+      this.getHomeGoods(this.currentType);
+
+      this.$refs.scroll.refresh();
+      // console.log("上拉加载更多多");
     }
   },
   computed: {
@@ -185,6 +154,7 @@ export default {
 <style scoped>
 #home {
   padding-top: 44px;
+  height: 100vh;
 }
 .home-nav {
   background-color: var(--color-tint);
@@ -201,4 +171,16 @@ export default {
   background-color: #fff;
   z-index: 99;
 }
+.content {
+  /* height: 300px; */
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+}
+/* .content {
+  height: calc(100% - 93px);
+  overflow: hidden;
+  margin-top: 44px;
+} */
 </style>
