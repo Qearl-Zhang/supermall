@@ -6,12 +6,12 @@
 
 <script>
 export default {
-  name: "BackTop",
-  methods: {
-    backClick() {
-      // console.log("回到顶部");
-    }
-  }
+  name: "BackTop"
+  // methods: {
+  //   backClick() {
+  //     // console.log("回到顶部");
+  //   }
+  // }
 };
 </script>
 

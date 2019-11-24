@@ -29,7 +29,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-
+  /* 微调 */
   padding: 2px;
 }
 </style>

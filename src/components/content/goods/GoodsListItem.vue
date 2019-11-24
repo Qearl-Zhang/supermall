@@ -1,6 +1,6 @@
 <template>
-  <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="" />
+  <div class="goods-item" @click="itemClick">
+    <img :src="showImage" alt="" @load="imageLoad" />
     <div class="goods-info">
       <p>{{ goodsItem.title }}</p>
       <span class="price">{{ goodsItem.price }}</span>
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { log } from "util";
 export default {
   name: "GoodsListItem",
   props: {
@@ -18,6 +19,34 @@ export default {
       default() {
         return [];
       }
+    }
+  },
+  methods: {
+    imageLoad() {
+      // 监听每一张图片的加载完成
+      // console.log("imageload");
+      this.$bus.$emit("itemImageLoad");
+    },
+    itemClick() {
+      // console.log("跳转到详情页");
+      // console.log(this.goodsItem);
+      // console.log(this.goodsItem.iid);
+
+      // 使用动态路由的方式
+      // 用push,不用replace的原因,因为按钮点击后需要返回
+      this.$router.push("/detail/" + this.goodsItem.iid);
+      // 使用query方式
+      /* this.$router.push({
+        path: "/detail",
+        query: {
+          iid: this.goodsItem.iid
+        }
+      }); */
+    }
+  },
+  computed: {
+    showImage() {
+      return this.goodsItem.image || this.goodsItem.show.img;
     }
   }
 };

@@ -36,25 +36,38 @@ export default {
       pullUpLoad: this.pullUpLoad
     });
     // 2.监听滚动的位置
-    this.scroll.on("scroll", position => {
-      // console.log(position);
-      this.$emit("scroll", position);
-    });
-    // 3.监听上拉事件(不是每个都需要监听)
-    this.scroll.on("pullingUp", () => {
-      // console.log("上拉加载更多");
-      this.$emit("pullingUp");
-    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", position => {
+        // console.log(position);
+        this.$emit("scroll", position);
+      });
+    }
+    // 3.监听scroll滚动到底部
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        // console.log("监听滚动到底部");
+        // 子组件向父组件里回调
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
+    // 封装方法--返回顶部
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
-    finishPullUp() {
-      this.scroll.finishPullUp();
-    },
+    // 封装方法--刷新
     refresh() {
-      this.scroll.refresh();
+      this.scroll && this.scroll.refresh();
+      // console.log("---------");
+    },
+    // 封装方法--完成上拉加载更多
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp();
+    },
+    //封装方法--当前的scrollY
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
     }
   }
 };

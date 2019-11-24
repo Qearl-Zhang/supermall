@@ -69,16 +69,33 @@ export default {
   created() {},
   mounted() {
     // new BScroll(document.querySelector(".wrapper"), {});
+    // 默认情况下BScroll是不可以实施监听滚动的位置,需要传入第二个参数option,通过probeType侦测.
+    // probeType:0  不侦测实时的位置
+    // probeType:1  同上
+    // probeType:2  在手指滚动过程中侦测,手指离开后的惯性滚动过程不侦测
+    // probeType:3  只要是滚动,都侦测
+
+    // click点击
+    // click:false  默认是false,无论是true还是false,button都可以点击
+    // click:true   只有为true的时候,div的点击才能监听点击
+
+    // pullUpLoad:上拉加载更多
     this.scroll = new BScroll(".wrapper", {
-      click: true
-      // probeType: 3,
-      // pullUpLoad: true
+      click: true,
+      probeType: 3,
+      pullUpLoad: true
     });
     this.scroll.on("scroll", position => {
       // console.log(position);
     });
     this.scroll.on("pullingUp", () => {
+      // 只会打印一次"上拉加载更多"
       console.log("上拉加载更多");
+      // 发送网络请求,请求更多的数据
+      // 等数据请求完成,并且将新的数据展示出来后
+      setTimeout(() => {
+        this.scroll.finishPullUp();
+      }, 2000);
     });
   },
   data() {
