@@ -7,6 +7,15 @@
     <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav" />
     <scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
       <!-- 注意:属性:topImages  传入值:top-images -->
+      <!-- 测试 -->
+      <!-- <div>{{ $store.state.cartList.length }}</div> -->
+
+      <ul>
+        <li v-for="item in $store.state.cartList" :key="item.id">
+          {{ item }}
+        </li>
+      </ul>
+
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goodsInfo" />
       <detail-shop-info :shop="shopInfo" />
@@ -18,7 +27,7 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo" />
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
-    <detail-bottom-bar />
+    <detail-bottom-bar @addCart="addToCart" />
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
@@ -124,6 +133,18 @@ export default {
 
       // 判断backtop是否显示
       this.listenShopBackTop(position);
+    },
+    addToCart() {
+      // console.log("---");
+      // 1.获取购物车需要展示的信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goodsInfo.title;
+      product.desc = this.goodsInfo.desc;
+      product.price = this.goodsInfo.realPrice;
+      product.iid = this.iid;
+      // 2.将商品添加到购物车里
+      this.$store.dispatch("addCart", product);
     }
   },
 
@@ -133,7 +154,7 @@ export default {
 
     // 2.根据iid请求详情数据
     getDetail(this.iid).then(res => {
-      // console.log(res);
+      console.log(res);
       // 1.获取数据
       // 将数据进行分离,全部数据都在res.result里
       const data = res.result;
