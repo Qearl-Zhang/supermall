@@ -42,7 +42,7 @@ export default {
         this.$emit("scroll", position);
       });
     }
-    // 3.监听scroll滚动到底部
+    // 3.监听scroll滚动到底部,上拉加载更多
     if (this.pullUpLoad) {
       this.scroll.on("pullingUp", () => {
         // console.log("监听滚动到底部");

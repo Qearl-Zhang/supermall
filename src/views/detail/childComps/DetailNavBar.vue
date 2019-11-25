@@ -36,6 +36,7 @@ export default {
   methods: {
     titleClick(index) {
       this.currentIndex = index;
+      this.$emit("titleClick", index);
     },
     backClick() {
       // 或者使用go(-1)

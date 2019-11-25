@@ -2,7 +2,7 @@ import { RegExp } from "core-js";
 
 // 公共的方法抽取到这里
 // 防抖函数--用于优化性能
-export function debounce(func, delay) {
+export function debounce(func, delay = 50) {
   let timer = null;
   return function (...args) {
     if (timer) clearTimeout(timer);

@@ -43,7 +43,7 @@ import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 // Better-Scroll组件
 import Scroll from "components/common/scroll/Scroll";
-// 返回顶部组件
+// 返回顶部组件,放入mixin
 import BackTop from "components/content/backTop/BackTop";
 
 // 子组件导入
@@ -54,10 +54,11 @@ import FeatureView from "./childComps/FeatureView";
 // 方法导入
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 export default {
   name: "Home",
+  mixins: [backTopMixin],
   components: {
     HomeSwiper,
     HomeRecommendView,
@@ -66,6 +67,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
+    // 放入mixin.js
     BackTop
   },
   data() {
@@ -88,6 +90,7 @@ export default {
         }
       },
       currentType: "pop",
+      // 放入mixin
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
@@ -105,7 +108,7 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    /* 使用混入mixin 
+    /* 使用混入mixin
     // 1.item中图片加载完成的事件监听
     const refresh = debounce(this.$refs.scroll.refresh, 200);
     // 对监听的事件进行保存
@@ -117,7 +120,7 @@ export default {
     // 2.获取tabControl的offsetTop
     // 所有组件都有一个属性$el:用于获取组件中的元素
     // this.tabOffsetTop = this.$refs.tabControl.$el;
-    // console.log(this.$refs.tabControl.$el.offsetTop); 
+    // console.log(this.$refs.tabControl.$el.offsetTop);
     */
   },
   destroyed() {
@@ -184,19 +187,23 @@ export default {
       this.$refs.topTabControl.currentIndex = index;
       this.$refs.tabControl.currentIndex = index;
     },
-    // 回到顶部
+
+    // 回到顶部,放入mixin.js
     backClick() {
       // console.log("监听点击");
       this.$refs.scroll.scrollTo(0, 0, 500);
     },
+
     // 滚动区域>1000时,显示返回顶部按钮
     contentScroll(position) {
-      // 1.判断backtop是否显示
       // console.log(position);
+      // --------方法methods内部的内容不能再抽取到mixin中
+      // 1.判断backtop是否显示
       this.isShowBackTop = -position.y > 1000;
       // 2.决定tab-control是否吸顶(position:fixed)
       this.isTabFixed = -position.y > this.tabOffsetTop;
     },
+
     // 加载更多
     loadMore() {
       // console.log("加载更多");
