@@ -10,11 +10,11 @@
       <!-- 测试 -->
       <!-- <div>{{ $store.state.cartList.length }}</div> -->
 
-      <ul>
+      <!-- <ul>
         <li v-for="item in $store.state.cartList" :key="item.id">
           {{ item }}
         </li>
-      </ul>
+      </ul> -->
 
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goodsInfo" />
@@ -29,6 +29,7 @@
     </scroll>
     <detail-bottom-bar @addCart="addToCart" />
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <!-- 封装到组件中 <toast :message="message" :show="show"></toast> -->
   </div>
 </template>
 
@@ -46,11 +47,15 @@ import DetailBottomBar from "./childComps/DetailBottomBar";
 // 导入公共组件
 import Scroll from "components/common/scroll/Scroll";
 import GoodsList from "components/content/goods/GoodsList";
+// 封装到组件中
+// import Toast from "components/common/toast/Toast";
 
 // 导入方法
 import { getDetail, Goods, getRecommend } from "network/detail";
 import { debounce } from "common/utils";
 import { itemListenerMixin, backTopMixin } from "common/mixin";
+
+import { mapActions } from "vuex";
 
 export default {
   name: "Detail",
@@ -66,6 +71,8 @@ export default {
     DetailBottomBar,
     Scroll,
     GoodsList
+    // 封装到组件中
+    // Toast
   },
   data() {
     return {
@@ -83,9 +90,13 @@ export default {
       themeTopYs: [],
       getThemeTopY: null,
       currentIndex: 0
+      // 封装到组件中
+      // message: "",
+      // show: false
     };
   },
   methods: {
+    // ...mapActions(["addToCart"]),
     detailImageLoad() {
       // console.log('-----)
       this.refresh();
@@ -144,7 +155,23 @@ export default {
       product.price = this.goodsInfo.realPrice;
       product.iid = this.iid;
       // 2.将商品添加到购物车里
-      this.$store.dispatch("addCart", product);
+      // mapAction的映射关系-----出现栈溢出报错
+      // this.addToCart(product).then(res => {
+      //   console.log(res);
+      // });
+
+      this.$store.dispatch("addCart", product).then(res => {
+        // 封装到组件
+        /*  this.show = true;
+        this.message = message;
+        setTimeout(() => {
+          this.show = false;
+          this.message = "";
+        }, 1500);
+        console.log(res); */
+        console.log(this.$toast);
+        this.$toast.show(res, 2000);
+      });
     }
   },
 
@@ -154,7 +181,7 @@ export default {
 
     // 2.根据iid请求详情数据
     getDetail(this.iid).then(res => {
-      console.log(res);
+      // console.log(res);
       // 1.获取数据
       // 将数据进行分离,全部数据都在res.result里
       const data = res.result;

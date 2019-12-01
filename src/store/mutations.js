@@ -6,6 +6,8 @@ export default {
     payload.count++
   },
   [ADD_TO_CART](state, payload) {
+    // 默认加入购物车后是选中状态
+    payload.checked = true
     state.cartList.push(payload)
   }
 }
